@@ -1,0 +1,613 @@
+<!-- htmlhint-disable -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="dashboard">
+    <nav class="dashboard-nav">
+        <div class="logo"><i class="fas fa-tools"></i> FixMate AI Admin</div>
+        <div class="nav-right">
+            <span><i class="fas fa-shield-alt"></i> Admin Panel</span>
+            <a href="{% url 'logout' %}" class="btn-logout">Logout</a>
+        </div>
+    </nav>
+    
+    <div class="dashboard-content">
+        <div class="dashboard-header">
+            <div>
+                <h2>AI-Powered Platform Analytics</h2>
+                <p>Comprehensive analysis of clients, workers, and AI matching performance across India</p>
+            </div>
+        </div>
+        
+        <!-- Key Metrics -->
+        <div class="admin-metrics-grid">
+            <div class="metric-card purple">
+                <div class="metric-icon">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <div class="metric-content">
+                    <p class="metric-label">Total Jobs</p>
+                    <h2>{{ total_jobs }}</h2>
+                    <div class="metric-breakdown">
+                        <span class="breakdown-item pending">{{ pending_jobs }} Pending</span>
+                        <span class="breakdown-item completed">{{ completed_jobs }} Completed</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="metric-card blue">
+                <div class="metric-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="metric-content">
+                    <p class="metric-label">Total Clients</p>
+                    <h2>{{ total_clients }}</h2>
+                    <div class="metric-breakdown">
+                        <span class="breakdown-item">Avg Budget: ₹{{ avg_client_budget|floatformat:0 }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="metric-card green">
+                <div class="metric-icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="metric-content">
+                    <p class="metric-label">Total Workers</p>
+                    <h2>{{ total_workers }}</h2>
+                    <div class="metric-breakdown">
+                        <span class="breakdown-item">Avg Rating: {{ avg_worker_rating|floatformat:1 }}/5.0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="metric-card orange">
+                <div class="metric-icon">
+                    <i class="fas fa-rupee-sign"></i>
+                </div>
+                <div class="metric-content">
+                    <p class="metric-label">Total Revenue</p>
+                    <h2>₹{{ total_revenue|floatformat:0 }}</h2>
+                    <div class="metric-breakdown">
+                        <span class="breakdown-item">Worker Earnings: ₹{{ total_worker_earnings|floatformat:0 }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- AI Analysis Section -->
+        <div class="ai-analysis-section">
+            <div class="section-title-admin">
+                <i class="fas fa-brain"></i>
+                <h3>AI Matching Analysis</h3>
+            </div>
+            
+            <div class="ai-analysis-grid">
+                <div class="analysis-card">
+                    <div class="analysis-header">
+                        <i class="fas fa-chart-line"></i>
+                        <h4>AI Match Score</h4>
+                    </div>
+                    <div class="analysis-value">
+                        <span class="big-number">{{ avg_match_score|floatformat:2 }}</span>
+                        <span class="value-label">Average Score</span>
+                    </div>
+                    <div class="analysis-bar">
+                        <div class="bar-fill" style="width: {{ avg_match_score|floatformat:0 }}%"></div>
+                    </div>
+                    <p class="analysis-desc">AI successfully matches clients with optimal workers based on skills, location, and past performance</p>
+                </div>
+                
+                <div class="analysis-card">
+                    <div class="analysis-header">
+                        <i class="fas fa-star"></i>
+                        <h4>Technical Rating</h4>
+                    </div>
+                    <div class="analysis-value">
+                        <span class="big-number">{{ avg_technical_rating|floatformat:1 }}</span>
+                        <span class="value-label">Out of 5.0</span>
+                    </div>
+                    <div class="rating-stars">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= avg_technical_rating %}
+                                <i class="fas fa-star filled"></i>
+                            {% else %}
+                                <i class="far fa-star"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <p class="analysis-desc">Average technical skill rating across all workers on the platform</p>
+                </div>
+                
+                <div class="analysis-card">
+                    <div class="analysis-header">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <h4>Top Locations</h4>
+                    </div>
+                    <div class="location-list">
+                        {% for loc in location_stats|slice:":5" %}
+                        <div class="location-item">
+                            <span class="location-name">{{ loc.location }}</span>
+                            <span class="location-count">{{ loc.count }} jobs</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <p class="analysis-desc">Most active service locations across India</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Client Analysis -->
+        <div class="analysis-section">
+            <div class="section-title-admin">
+                <i class="fas fa-user-friends"></i>
+                <h3>Client Analysis</h3>
+            </div>
+            
+            <div class="analysis-content-grid">
+                <div class="analysis-table-card">
+                    <h4><i class="fas fa-trophy"></i> Top Clients by Spending</h4>
+                    <table class="analysis-table">
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Email</th>
+                                <th>Total Spent</th>
+                                <th>Bookings</th>
+                                <th>Avg Budget</th>
+                                <th>Location</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for profile in top_clients %}
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <i class="fas fa-user-circle"></i>
+                                        <span>{{ profile.user.first_name }} {{ profile.user.last_name }}</span>
+                                    </div>
+                                </td>
+                                <td>{{ profile.user.email }}</td>
+                                <td class="amount">₹{{ profile.total_spent|floatformat:0 }}</td>
+                                <td><span class="badge-count">{{ profile.total_bookings }}</span></td>
+                                <td class="amount">₹{{ profile.average_budget|floatformat:0 }}</td>
+                                <td><i class="fas fa-map-marker-alt"></i> {{ profile.preferred_location }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="insights-card">
+                    <h4><i class="fas fa-lightbulb"></i> Client Insights</h4>
+                    <div class="insight-item">
+                        <div class="insight-icon purple">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h5>Average Client Budget</h5>
+                            <p class="insight-value">₹{{ avg_client_budget|floatformat:0 }}</p>
+                            <p class="insight-desc">Per booking across all clients</p>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-item">
+                        <div class="insight-icon blue">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h5>Total Client Spending</h5>
+                            <p class="insight-value">₹{{ total_client_spent|floatformat:0 }}</p>
+                            <p class="insight-desc">Cumulative spending on platform</p>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-item">
+                        <div class="insight-icon green">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h5>Active Clients</h5>
+                            <p class="insight-value">{{ total_clients }}</p>
+                            <p class="insight-desc">Registered and active users</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Worker Analysis -->
+        <div class="analysis-section">
+            <div class="section-title-admin">
+                <i class="fas fa-hard-hat"></i>
+                <h3>Worker Performance Analysis</h3>
+            </div>
+            
+            <div class="analysis-content-grid">
+                <div class="analysis-table-card">
+                    <h4><i class="fas fa-medal"></i> Top Performing Workers</h4>
+                    <table class="analysis-table">
+                        <thead>
+                            <tr>
+                                <th>Worker</th>
+                                <th>Specialization</th>
+                                <th>Rating</th>
+                                <th>Technical</th>
+                                <th>Jobs</th>
+                                <th>Completed</th>
+                                <th>Earnings</th>
+                                <th>Location</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for worker in top_workers %}
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <i class="fas fa-user-tie"></i>
+                                        <span>{{ worker.user.first_name }} {{ worker.user.last_name }}</span>
+                                    </div>
+                                </td>
+                                <td><span class="badge-skill">{{ worker.specialization }}</span></td>
+                                <td>
+                                    <div class="rating-cell">
+                                        <i class="fas fa-star"></i> {{ worker.rating }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="rating-cell">
+                                        <i class="fas fa-tools"></i> {{ worker.technical_rating }}
+                                    </div>
+                                </td>
+                                <td><span class="badge-count">{{ worker.job_count }}</span></td>
+                                <td><span class="badge-count success">{{ worker.completed_jobs }}</span></td>
+                                <td class="amount">₹{{ worker.earnings|floatformat:0 }}</td>
+                                <td><i class="fas fa-map-marker-alt"></i> {{ worker.location }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="insights-card">
+                    <h4><i class="fas fa-chart-bar"></i> Worker Metrics</h4>
+                    <div class="insight-item">
+                        <div class="insight-icon orange">
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h5>Average Rating</h5>
+                            <p class="insight-value">{{ avg_worker_rating|floatformat:1 }}/5.0</p>
+                            <p class="insight-desc">Customer satisfaction score</p>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-item">
+                        <div class="insight-icon purple">
+                            <i class="fas fa-wrench"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h5>Technical Rating</h5>
+                            <p class="insight-value">{{ avg_technical_rating|floatformat:1 }}/5.0</p>
+                            <p class="insight-desc">Skill proficiency average</p>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-item">
+                        <div class="insight-icon green">
+                            <i class="fas fa-rupee-sign"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h5>Total Earnings</h5>
+                            <p class="insight-value">₹{{ total_worker_earnings|floatformat:0 }}</p>
+                            <p class="insight-desc">Paid to all workers</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Category Distribution -->
+        <div class="category-section">
+            <div class="section-title-admin">
+                <i class="fas fa-th-large"></i>
+                <h3>Service Category Distribution</h3>
+            </div>
+            
+            <div class="category-grid">
+                {% for cat in category_stats %}
+                <div class="category-card">
+                    <div class="category-icon">
+                        {% if cat.category == 'Plumbing' %}
+                            <i class="fas fa-wrench"></i>
+                        {% elif cat.category == 'Electrical' %}
+                            <i class="fas fa-bolt"></i>
+                        {% elif cat.category == 'Carpentry' %}
+                            <i class="fas fa-hammer"></i>
+                        {% elif cat.category == 'Cleaning' %}
+                            <i class="fas fa-broom"></i>
+                        {% elif cat.category == 'HVAC' %}
+                            <i class="fas fa-snowflake"></i>
+                        {% elif cat.category == 'Painting' %}
+                            <i class="fas fa-paint-roller"></i>
+                        {% else %}
+                            <i class="fas fa-tools"></i>
+                        {% endif %}
+                    </div>
+                    <h4>{{ cat.category }}</h4>
+                    <p class="category-count">{{ cat.count }} jobs</p>
+                    <div class="category-bar">
+                        <div class="category-bar-fill" style="width: {% widthratio cat.count total_jobs 100 %}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Customer-Worker Interaction Analysis -->
+        <div class="interaction-section">
+            <div class="section-title-admin">
+                <i class="fas fa-handshake"></i>
+                <h3>Customer-Worker Interaction Analysis</h3>
+            </div>
+            
+            <div class="interaction-grid">
+                <div class="interaction-card">
+                    <div class="interaction-header">
+                        <i class="fas fa-sync-alt"></i>
+                        <h4>Active Interactions</h4>
+                    </div>
+                    <div class="interaction-value">
+                        <span class="big-number">{{ active_interactions }}</span>
+                        <span class="value-label">Jobs in Progress</span>
+                    </div>
+                    <p class="interaction-desc">Current customer-worker engagements happening right now</p>
+                </div>
+                
+                <div class="interaction-card">
+                    <div class="interaction-header">
+                        <i class="fas fa-check-double"></i>
+                        <h4>Completed Interactions</h4>
+                    </div>
+                    <div class="interaction-value">
+                        <span class="big-number">{{ completed_interactions }}</span>
+                        <span class="value-label">Successful Completions</span>
+                    </div>
+                    <p class="interaction-desc">Total successful customer-worker interactions</p>
+                </div>
+                
+                <div class="interaction-card">
+                    <div class="interaction-header">
+                        <i class="fas fa-redo"></i>
+                        <h4>Client Retention</h4>
+                    </div>
+                    <div class="interaction-value">
+                        <span class="big-number">{{ client_retention_rate|floatformat:1 }}%</span>
+                        <span class="value-label">{{ repeat_clients }} Repeat Clients</span>
+                    </div>
+                    <p class="interaction-desc">Clients with multiple bookings showing platform satisfaction</p>
+                </div>
+                
+                <div class="interaction-card">
+                    <div class="interaction-header">
+                        <i class="fas fa-user-clock"></i>
+                        <h4>Worker Utilization</h4>
+                    </div>
+                    <div class="interaction-value">
+                        <span class="big-number">{{ worker_utilization_rate|floatformat:1 }}%</span>
+                        <span class="value-label">{{ active_workers }} Active Workers</span>
+                    </div>
+                    <p class="interaction-desc">Workers currently engaged with customers</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Urgency & Status Analysis -->
+        <div class="analysis-section">
+            <div class="section-title-admin">
+                <i class="fas fa-chart-pie"></i>
+                <h3>Job Status & Urgency Breakdown</h3>
+            </div>
+            
+            <div class="breakdown-grid">
+                <div class="breakdown-card">
+                    <h4><i class="fas fa-tasks"></i> Status Distribution</h4>
+                    <div class="status-breakdown">
+                        <div class="status-item">
+                            <div class="status-bar pending-bar">
+                                <div class="status-fill" style="width: {{ status_percentages.pending }}%"></div>
+                            </div>
+                            <div class="status-info">
+                                <span class="status-label">Pending</span>
+                                <span class="status-count">{{ pending_jobs }} ({{ status_percentages.pending|floatformat:1 }}%)</span>
+                            </div>
+                        </div>
+                        
+                        <div class="status-item">
+                            <div class="status-bar assigned-bar">
+                                <div class="status-fill" style="width: {{ status_percentages.assigned }}%"></div>
+                            </div>
+                            <div class="status-info">
+                                <span class="status-label">In Progress</span>
+                                <span class="status-count">{{ assigned_jobs }} ({{ status_percentages.assigned|floatformat:1 }}%)</span>
+                            </div>
+                        </div>
+                        
+                        <div class="status-item">
+                            <div class="status-bar completed-bar">
+                                <div class="status-fill" style="width: {{ status_percentages.completed }}%"></div>
+                            </div>
+                            <div class="status-info">
+                                <span class="status-label">Completed</span>
+                                <span class="status-count">{{ completed_jobs }} ({{ status_percentages.completed|floatformat:1 }}%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="breakdown-card">
+                    <h4><i class="fas fa-flag"></i> Urgency Levels</h4>
+                    <div class="urgency-breakdown">
+                        <div class="urgency-item low">
+                            <div class="urgency-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="urgency-info">
+                                <span class="urgency-label">Low Priority</span>
+                                <span class="urgency-count">{{ urgency_stats.low }} jobs</span>
+                            </div>
+                        </div>
+                        
+                        <div class="urgency-item medium">
+                            <div class="urgency-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div class="urgency-info">
+                                <span class="urgency-label">Medium Priority</span>
+                                <span class="urgency-count">{{ urgency_stats.medium }} jobs</span>
+                            </div>
+                        </div>
+                        
+                        <div class="urgency-item high">
+                            <div class="urgency-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="urgency-info">
+                                <span class="urgency-label">High Priority</span>
+                                <span class="urgency-count">{{ urgency_stats.high }} jobs</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="breakdown-card">
+                    <h4><i class="fas fa-rupee-sign"></i> Category Pricing</h4>
+                    <div class="pricing-breakdown">
+                        {% for cat in category_avg_price|slice:":5" %}
+                        <div class="pricing-item">
+                            <span class="pricing-category">{{ cat.category }}</span>
+                            <div class="pricing-details">
+                                <span class="pricing-avg">₹{{ cat.avg_price|floatformat:0 }}</span>
+                                <span class="pricing-jobs">{{ cat.total_jobs }} jobs</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- AI Performance Metrics -->
+        <div class="ai-performance-section">
+            <div class="section-title-admin">
+                <i class="fas fa-robot"></i>
+                <h3>AI Performance Metrics</h3>
+            </div>
+            
+            <div class="ai-metrics-grid">
+                <div class="ai-metric-card">
+                    <div class="metric-circle">
+                        <svg viewBox="0 0 36 36" class="circular-chart">
+                            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                            <path class="circle" stroke-dasharray="{{ avg_match_score|floatformat:0 }}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                            <text x="18" y="20.35" class="percentage">{{ avg_match_score|floatformat:0 }}%</text>
+                        </svg>
+                    </div>
+                    <h5>AI Match Accuracy</h5>
+                    <p>{{ high_match_jobs }} jobs with 90%+ match score</p>
+                </div>
+                
+                <div class="ai-metric-card">
+                    <div class="metric-circle">
+                        <svg viewBox="0 0 36 36" class="circular-chart">
+                            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                            <path class="circle" stroke-dasharray="{{ status_percentages.completed|floatformat:0 }}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                            <text x="18" y="20.35" class="percentage">{{ status_percentages.completed|floatformat:0 }}%</text>
+                        </svg>
+                    </div>
+                    <h5>Completion Rate</h5>
+                    <p>{{ completed_jobs }} successfully completed jobs</p>
+                </div>
+                
+                <div class="ai-metric-card">
+                    <div class="metric-circle">
+                        <svg viewBox="0 0 36 36" class="circular-chart">
+                            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                            <path class="circle" stroke-dasharray="{% widthratio avg_worker_rating 5 100 %}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                            <text x="18" y="20.35" class="percentage">{{ avg_worker_rating|floatformat:1 }}</text>
+                        </svg>
+                    </div>
+                    <h5>Worker Rating</h5>
+                    <p>Average customer satisfaction score</p>
+                </div>
+                
+                <div class="ai-metric-card">
+                    <div class="metric-circle">
+                        <svg viewBox="0 0 36 36" class="circular-chart">
+                            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                            <path class="circle" stroke-dasharray="{{ avg_response_time|floatformat:0 }}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                            <text x="18" y="20.35" class="percentage">{{ avg_response_time|floatformat:0 }}m</text>
+                        </svg>
+                    </div>
+                    <h5>Avg Response Time</h5>
+                    <p>Worker response time in minutes</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Interactive Charts Section -->
+        <div class="charts-section">
+            <div class="section-title-admin">
+                <i class="fas fa-chart-bar"></i>
+                <h3>Visual Analytics & Trends</h3>
+            </div>
+            
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h4><i class="fas fa-chart-pie"></i> Job Status Distribution</h4>
+                    <canvas id="statusChart"></canvas>
+                </div>
+                
+                <div class="chart-card">
+                    <h4><i class="fas fa-chart-bar"></i> Category Performance</h4>
+                    <canvas id="categoryChart"></canvas>
+                </div>
+                
+                <div class="chart-card">
+                    <h4><i class="fas fa-chart-line"></i> Revenue by Category</h4>
+                    <canvas id="revenueChart"></canvas>
+                </div>
+                
+                <div class="chart-card">
+                    <h4><i class="fas fa-chart-area"></i> Urgency Levels</h4>
+                    <canvas id="urgencyChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="{% static 'js/admin-charts.js' %}"></script>
+<script>
+// Initialize charts with data from Django
+document.addEventListener('DOMContentLoaded', function() {
+    const chartData = {
+        pending_jobs: {{ pending_jobs }},
+        assigned_jobs: {{ assigned_jobs }},
+        completed_jobs: {{ completed_jobs }},
+        total_jobs: {{ total_jobs }},
+        category_labels: [{% for cat in category_stats %}'{{ cat.category }}'{% if not forloop.last %}, {% endif %}{% endfor %}],
+        category_counts: [{% for cat in category_stats %}{{ cat.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+        revenue_labels: [{% for cat in category_avg_price|slice:":6" %}'{{ cat.category }}'{% if not forloop.last %}, {% endif %}{% endfor %}],
+        revenue_data: [{% for cat in category_avg_price|slice:":6" %}{{ cat.avg_price|floatformat:0 }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+        urgency_low: {{ urgency_stats.low }},
+        urgency_medium: {{ urgency_stats.medium }},
+        urgency_high: {{ urgency_stats.high }}
+    };
+    
+    initAdminCharts(chartData);
+});
+</script>
+{% endblock %}

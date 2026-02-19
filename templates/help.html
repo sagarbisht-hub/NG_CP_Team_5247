@@ -1,0 +1,263 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="dashboard">
+    <nav class="dashboard-nav">
+        <div class="logo"><i class="fas fa-tools"></i> FixMate AI</div>
+        <div class="nav-right">
+            {% if user.is_authenticated %}
+                <span>{{ user.first_name }}</span>
+                <a href="{% url 'dashboard' %}" class="btn-logout">Dashboard</a>
+                <a href="{% url 'logout' %}" class="btn-logout">Logout</a>
+            {% else %}
+                <a href="{% url 'landing' %}" class="btn-logout">Home</a>
+                <a href="{% url 'login' %}" class="btn-logout">Sign In</a>
+                <a href="{% url 'signup' %}" class="btn-logout">Sign Up</a>
+            {% endif %}
+        </div>
+    </nav>
+    
+    <div class="dashboard-content">
+        <div class="dashboard-header">
+            <div>
+                <h2>Help & Support</h2>
+                <p>Get answers to common questions and troubleshooting tips</p>
+            </div>
+        </div>
+        
+        <div class="help-grid">
+            <div class="help-section">
+                <h3><i class="fas fa-camera"></i> Visual Problem Diagnosis</h3>
+                <p class="section-subtitle">Upload photos or videos of your issue and get instant AI-powered worker recommendations</p>
+                
+                <div class="upload-section">
+                    <form method="POST" enctype="multipart/form-data" id="problemForm">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Describe Your Problem</label>
+                            <textarea name="problem_description" rows="3" placeholder="e.g., My kitchen sink is leaking from the pipe underneath..." required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Upload Photos/Videos</label>
+                            <div class="upload-area" id="uploadArea">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Drag & drop files here or click to browse</p>
+                                <p class="upload-hint">Supports: JPG, PNG, MP4, MOV (Max 50MB)</p>
+                                <input type="file" name="media_files" id="mediaFiles" multiple accept="image/*,video/*" style="display:none">
+                            </div>
+                            <div id="filePreview" class="file-preview"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Problem Category (Optional)</label>
+                            <select name="category">
+                                <option value="">Let AI detect automatically</option>
+                                <option value="Plumbing">Plumbing</option>
+                                <option value="Electrical">Electrical</option>
+                                <option value="Carpentry">Carpentry</option>
+                                <option value="Cleaning">Cleaning</option>
+                                <option value="HVAC">HVAC</option>
+                                <option value="Painting">Painting</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Urgency Level</label>
+                            <div class="urgency-selector">
+                                <label class="urgency-option">
+                                    <input type="radio" name="urgency" value="low" checked>
+                                    <span class="urgency-badge low">Low - Can wait</span>
+                                </label>
+                                <label class="urgency-option">
+                                    <input type="radio" name="urgency" value="medium">
+                                    <span class="urgency-badge medium">Medium - Soon</span>
+                                </label>
+                                <label class="urgency-option">
+                                    <input type="radio" name="urgency" value="high">
+                                    <span class="urgency-badge high">High - Urgent</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn-analyze">
+                            <i class="fas fa-magic"></i> Analyze & Find Workers
+                        </button>
+                    </form>
+                    
+                    <div id="analysisResult" class="analysis-result" style="display:none">
+                        <div class="result-header">
+                            <i class="fas fa-check-circle"></i>
+                            <h4>Analysis Complete!</h4>
+                        </div>
+                        <div class="detected-issue">
+                            <p class="label">Detected Issue:</p>
+                            <p class="issue-text" id="detectedIssue"></p>
+                        </div>
+                        <div class="recommended-workers">
+                            <h4>Recommended Workers:</h4>
+                            <div id="workersList"></div>
+                        </div>
+                        <button class="btn-primary" onclick="createJobFromAnalysis()">
+                            <i class="fas fa-plus"></i> Create Job Request
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="divider"></div>
+                
+                <h3><i class="fas fa-question-circle"></i> Frequently Asked Questions</h3>
+                
+                <div class="faq-item">
+                    <h4>How do I post a new job?</h4>
+                    <p>Click the "Request Service" button on your dashboard, fill in the job details including title, category, urgency, and description. Our AI will automatically match you with the best available professional.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4>How does the AI matching work?</h4>
+                    <p>Our intelligent system analyzes worker skills, reliability scores, location, and current availability to find the perfect match for your job. We also apply fairness boosts to ensure equal opportunities for all workers.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4>How is pricing calculated?</h4>
+                    <p>Prices are dynamically calculated based on job urgency, complexity, category, and local market rates. Emergency jobs have higher rates, while routine tasks are more affordable.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4>What if I'm not satisfied with the work?</h4>
+                    <p>Contact our support team immediately. We have a satisfaction guarantee and will work to resolve any issues. Payment is only released after you confirm job completion.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4>How do I track my job status?</h4>
+                    <p>All your jobs are visible on your dashboard with real-time status updates: Pending (waiting for assignment), Assigned (worker matched), In Progress, or Completed.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4>Can I cancel a job?</h4>
+                    <p>Yes, you can cancel jobs before they're assigned to a worker. Once assigned, please contact the worker or our support team to discuss cancellation.</p>
+                </div>
+            </div>
+            
+            <div class="help-sidebar">
+                <div class="contact-card">
+                    <h3><i class="fas fa-headset"></i> Contact Support</h3>
+                    <p>Need immediate assistance? Our team is here to help.</p>
+                    
+                    <div class="contact-methods">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <p class="contact-label">Email</p>
+                                <p class="contact-value">support@fixmate.ai</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <p class="contact-label">Phone</p>
+                                <p class="contact-value">1-800-FIXMATE</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <i class="fas fa-clock"></i>
+                            <div>
+                                <p class="contact-label">Hours</p>
+                                <p class="contact-value">24/7 Support</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-primary" style="width: 100%; margin-top: 1rem;">
+                        <i class="fas fa-comments"></i> Start Live Chat
+                    </button>
+                </div>
+                
+                <div class="tips-card">
+                    <h3><i class="fas fa-lightbulb"></i> Pro Tips</h3>
+                    
+                    <div class="tip-item">
+                        <i class="fas fa-check"></i>
+                        <p>Provide detailed job descriptions for better matches</p>
+                    </div>
+                    
+                    <div class="tip-item">
+                        <i class="fas fa-check"></i>
+                        <p>Set realistic urgency levels to get fair pricing</p>
+                    </div>
+                    
+                    <div class="tip-item">
+                        <i class="fas fa-check"></i>
+                        <p>Review worker profiles before confirming</p>
+                    </div>
+                    
+                    <div class="tip-item">
+                        <i class="fas fa-check"></i>
+                        <p>Communicate clearly with your assigned worker</p>
+                    </div>
+                    
+                    <div class="tip-item">
+                        <i class="fas fa-check"></i>
+                        <p>Leave feedback to help improve the platform</p>
+                    </div>
+                </div>
+                
+                <div class="emergency-card">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Emergency Service</h3>
+                    <p>For urgent issues requiring immediate attention, mark your job as "Emergency" priority.</p>
+                    <button class="btn-emergency">Post Emergency Job</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="troubleshooting-section">
+            <h3><i class="fas fa-tools"></i> Troubleshooting Common Issues</h3>
+            
+            <div class="troubleshooting-grid">
+                <div class="trouble-card">
+                    <h4>Can't post a job</h4>
+                    <ul>
+                        <li>Check all required fields are filled</li>
+                        <li>Ensure you're logged in as a client</li>
+                        <li>Try refreshing the page</li>
+                        <li>Clear browser cache and cookies</li>
+                    </ul>
+                </div>
+                
+                <div class="trouble-card">
+                    <h4>No worker assigned</h4>
+                    <ul>
+                        <li>Wait a few minutes for AI matching</li>
+                        <li>Check if job details are clear</li>
+                        <li>Consider adjusting urgency level</li>
+                        <li>Contact support if delayed</li>
+                    </ul>
+                </div>
+                
+                <div class="trouble-card">
+                    <h4>Payment issues</h4>
+                    <ul>
+                        <li>Verify payment method is valid</li>
+                        <li>Check account balance</li>
+                        <li>Review transaction history</li>
+                        <li>Contact billing support</li>
+                    </ul>
+                </div>
+                
+                <div class="trouble-card">
+                    <h4>Login problems</h4>
+                    <ul>
+                        <li>Verify email and password</li>
+                        <li>Use "Forgot Password" if needed</li>
+                        <li>Check caps lock is off</li>
+                        <li>Try different browser</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

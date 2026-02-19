@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="landing-page">
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-tools"></i>
+                <span>FixMate AI</span>
+            </div>
+            <div class="nav-links">
+                <a href="#services">Services</a>
+                <a href="{% url 'help' %}">How it Works</a>
+            </div>
+            <div class="nav-buttons">
+                <a href="{% url 'login' %}" class="btn-signin">Sign In</a>
+                <a href="{% url 'signup' %}" class="btn-primary">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>India's Intelligent Hub for<br><span>Home & Professional Services.</span></h1>
+        <p>FixMate AI is India's premier service marketplace. We use advanced reasoning to ensure fair opportunities for workers and guaranteed success for clients across India.</p>
+        <div class="hero-buttons">
+            <a href="{% url 'signup' %}" class="btn-large">Join the Marketplace</a>
+            <a href="#services" class="btn-outline">Browse Professionals</a>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-box">
+                <i class="fas fa-bolt"></i>
+                <p class="stat-label">Instant Matches</p>
+                <p class="stat-value">< 2 mins</p>
+            </div>
+            <div class="stat-box">
+                <i class="fas fa-rupee-sign"></i>
+                <p class="stat-label">Currency</p>
+                <p class="stat-value">INR (₹)</p>
+            </div>
+            <div class="stat-box">
+                <i class="fas fa-map-marker-alt"></i>
+                <p class="stat-label">Service Area</p>
+                <p class="stat-value">All India</p>
+            </div>
+            <div class="stat-box">
+                <i class="fas fa-chart-pie"></i>
+                <p class="stat-label">Fair Pricing</p>
+                <p class="stat-value">Dynamic</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features-section">
+        <h2>Why Choose FixMate AI?</h2>
+        <p class="section-desc">Experience the future of home services with our AI-powered platform</p>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-check"></i>
+                </div>
+                <h3>100% Verified Professionals</h3>
+                <p>Every worker is thoroughly verified with background checks, skill assessments, and customer reviews to ensure quality service.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3>AI-Powered Matching</h3>
+                <p>Our intelligent algorithm matches you with the perfect professional based on skills, availability, location, and past performance.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-rupee-sign"></i>
+                </div>
+                <h3>Transparent Pricing</h3>
+                <p>Fair, upfront pricing in INR with no hidden charges. Our AI calculates optimal rates based on market standards and job complexity.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3>Real-Time Tracking</h3>
+                <p>Track your service request from booking to completion with live updates, worker location, and estimated arrival times.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h3>24/7 Support</h3>
+                <p>Round-the-clock customer support in multiple Indian languages to help you with any questions or concerns.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <h3>Quality Guarantee</h3>
+                <p>100% satisfaction guaranteed or your money back. We stand behind every service provided through our platform.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3>Easy Booking</h3>
+                <p>Book services in seconds with our simple interface. Upload photos, describe your need, and get matched instantly.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <h3>Secure Payments</h3>
+                <p>Multiple payment options including UPI, cards, and wallets. All transactions are encrypted and secure.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="services">
+        <h2>Service Categories</h2>
+        <p class="section-desc">Our specialized AI matching engine covers a wide range of essential services.</p>
+        
+        <div class="services-grid">
+            <div class="service-card">
+                <i class="fas fa-tint"></i>
+                <h3>Plumbing</h3>
+                <ul>
+                    <li>Emergency Leaks</li>
+                    <li>Pipe Fitting</li>
+                    <li>Drain Cleaning</li>
+                    <li>Water Heaters</li>
+                </ul>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-bolt"></i>
+                <h3>Electrical</h3>
+                <ul>
+                    <li>Wiring & Outlets</li>
+                    <li>Smart Home Setup</li>
+                    <li>Panel Upgrades</li>
+                    <li>Safety Audits</li>
+                </ul>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-hammer"></i>
+                <h3>Carpentry</h3>
+                <ul>
+                    <li>Furniture Repair</li>
+                    <li>Custom Cabinets</li>
+                    <li>Door Installation</li>
+                    <li>Deck Building</li>
+                </ul>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-broom"></i>
+                <h3>Cleaning</h3>
+                <ul>
+                    <li>Deep Cleaning</li>
+                    <li>Office Spaces</li>
+                    <li>Post-Construction</li>
+                    <li>Move In/Out</li>
+                </ul>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-snowflake"></i>
+                <h3>HVAC</h3>
+                <ul>
+                    <li>AC Repair</li>
+                    <li>Furnace Service</li>
+                    <li>Duct Cleaning</li>
+                    <li>Installation</li>
+                </ul>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-paint-roller"></i>
+                <h3>Painting</h3>
+                <ul>
+                    <li>Interior Painting</li>
+                    <li>Exterior Painting</li>
+                    <li>Cabinet Refinishing</li>
+                    <li>Wallpaper Removal</li>
+                </ul>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-leaf"></i>
+                <h3>Landscaping</h3>
+                <ul>
+                    <li>Lawn Maintenance</li>
+                    <li>Tree Trimming</li>
+                    <li>Garden Design</li>
+                    <li>Irrigation Systems</li>
+                </ul>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-wrench"></i>
+                <h3>Appliance Repair</h3>
+                <ul>
+                    <li>Refrigerator Repair</li>
+                    <li>Washer/Dryer Fix</li>
+                    <li>Oven Service</li>
+                    <li>Dishwasher Repair</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="logo">
+                    <i class="fas fa-tools"></i>
+                    <span>FixMate AI</span>
+                </div>
+                <p>India's intelligent service marketplace engine dedicated to maximizing job success and ensuring fair opportunities for all Indians.</p>
+                <p style="margin-top: 1rem; color: #818cf8;">🇮🇳 Proudly Made in India | All prices in ₹ INR</p>
+            </div>
+            <div class="footer-links">
+                <div>
+                    <h4>Services</h4>
+                    <a href="#services">Plumbing</a>
+                    <a href="#services">Electrical</a>
+                    <a href="#services">Carpentry</a>
+                    <a href="#services">Cleaning</a>
+                    <a href="#services">HVAC</a>
+                    <a href="#services">Painting</a>
+                    <a href="#services">Landscaping</a>
+                    <a href="#services">Appliance Repair</a>
+                </div>
+                <div>
+                    <h4>Platform</h4>
+                    <a href="{% url 'signup' %}">Get Started</a>
+                    <a href="{% url 'help' %}">How it Works</a>
+                    <a href="{% url 'help' %}">Help Center</a>
+                </div>
+                <div>
+                    <h4>Company</h4>
+                    <a href="#about">About Us</a>
+                    <a href="#contact">Contact</a>
+                    <a href="#careers">Careers</a>
+                    <a href="#blog">Blog</a>
+                </div>
+                <div>
+                    <h4>Legal</h4>
+                    <a href="#privacy">Privacy Policy</a>
+                    <a href="#terms">Terms of Service</a>
+                    <a href="#safety">Safety Guidelines</a>
+                    <a href="#trust">Trust & Safety</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 FixMate AI India. All rights reserved. Powered by intelligent matching technology. | Service available across India | All transactions in INR (₹)</p>
+        </div>
+    </footer>
+</div>
+{% endblock %}

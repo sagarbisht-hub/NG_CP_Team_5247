@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="dashboard">
+    <nav class="dashboard-nav">
+        <div class="logo"><i class="fas fa-tools"></i> FixMate AI</div>
+        <div class="nav-right">
+            <span>{{ worker.user.first_name }} - {{ worker.specialization }}</span>
+            <a href="{% url 'logout' %}" class="btn-logout">Logout</a>
+        </div>
+    </nav>
+    
+    <div class="dashboard-content">
+        <div class="dashboard-header">
+            <div>
+                <h2>Hello, {{ worker.user.first_name }}!</h2>
+                <p>Your reliability score: <span class="highlight">{{ worker.reliability_score }}%</span> | Rating: <span class="highlight">{{ worker.rating }}/5.0</span></p>
+            </div>
+            <div class="stats-row">
+                <div class="stat-card">
+                    <p class="label">Total Earnings</p>
+                    <p class="value green">₹{{ worker.earnings|floatformat:0 }}</p>
+                </div>
+                <div class="stat-card primary">
+                    <p class="label">Active Jobs</p>
+                    <p class="value">{{ jobs.count }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Worker Stats -->
+        <div class="quick-stats">
+            <div class="stat-box-small">
+                <div class="stat-icon-small purple">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <div class="stat-content-small">
+                    <p class="stat-label-small">Total Jobs</p>
+                    <h3>{{ worker.job_count }}</h3>
+                </div>
+            </div>
+            <div class="stat-box-small">
+                <div class="stat-icon-small green">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-content-small">
+                    <p class="stat-label-small">Completed</p>
+                    <h3>{{ worker.completed_jobs }}</h3>
+                </div>
+            </div>
+            <div class="stat-box-small">
+                <div class="stat-icon-small blue">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-content-small">
+                    <p class="stat-label-small">Technical Rating</p>
+                    <h3>{{ worker.technical_rating }}/5</h3>
+                </div>
+            </div>
+            <div class="stat-box-small">
+                <div class="stat-icon-small orange">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-content-small">
+                    <p class="stat-label-small">Avg Response</p>
+                    <h3>{{ worker.response_time }}m</h3>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-grid">
+            <div class="main-content">
+                <div class="section-header">
+                    <h3><i class="fas fa-tasks"></i> Assigned Jobs & Client Tracking</h3>
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-filter="all">All</button>
+                        <button class="filter-tab" data-filter="assigned">In Progress</button>
+                        <button class="filter-tab" data-filter="completed">Completed</button>
+                    </div>
+                </div>
+                
+                {% for job in jobs %}
+                <div class="job-card-enhanced worker-job-card" data-status="{{ job.status }}">
+                    <div class="job-card-header">
+                        <div class="job-info">
+                            <div class="job-icon-large">
+                                {% if job.category == 'Plumbing' %}
+                                    <i class="fas fa-wrench"></i>
+                                {% elif job.category == 'Electrical' %}
+                                    <i class="fas fa-bolt"></i>
+                                {% elif job.category == 'Carpentry' %}
+                                    <i class="fas fa-hammer"></i>
+                                {% elif job.category == 'Cleaning' %}
+                                    <i class="fas fa-broom"></i>
+                                {% elif job.category == 'HVAC' %}
+                                    <i class="fas fa-snowflake"></i>
+                                {% elif job.category == 'Painting' %}
+                                    <i class="fas fa-paint-roller"></i>
+                                {% else %}
+                                    <i class="fas fa-tools"></i>
+                                {% endif %}
+                            </div>
+                            <div class="job-details">
+                                <h4>{{ job.title }}</h4>
+                                <p class="job-description">{{ job.description|truncatewords:15 }}</p>
+                                
+                                <!-- Client Info -->
+                                <div class="client-info-card">
+                                    <div class="client-avatar">
+                                        <i class="fas fa-user-circle"></i>
+                                    </div>
+                                    <div class="client-details">
+                                        <p class="client-name"><strong>Client:</strong> {{ job.user.first_name }} {{ job.user.last_name }}</p>
+                                        <p class="client-contact"><i class="fas fa-envelope"></i> {{ job.user.email }}</p>
+                                        <p class="client-location"><i class="fas fa-map-marker-alt"></i> {{ job.location }}</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="job-meta-enhanced">
+                                    <span class="badge-category">{{ job.category }}</span>
+                                    <span class="meta-item"><i class="far fa-clock"></i> {{ job.created_at|date:"M d, Y" }}</span>
+                                    <span class="urgency-badge urgency-{{ job.urgency }}">
+                                        <i class="fas fa-flag"></i> {{ job.urgency|upper }}
+                                    </span>
+                                    <span class="meta-item"><i class="fas fa-brain"></i> AI Match: {{ job.ai_match_score|floatformat:0 }}%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="job-actions">
+                            <span class="status-badge status-{{ job.status }}">
+                                {% if job.status == 'pending' %}
+                                    <i class="fas fa-hourglass-half"></i> Pending
+                                {% elif job.status == 'assigned' %}
+                                    <i class="fas fa-user-check"></i> In Progress
+                                {% elif job.status == 'completed' %}
+                                    <i class="fas fa-check-circle"></i> Completed
+                                {% endif %}
+                            </span>
+                            <div class="price-tag">
+                                <span class="price-label">Earning</span>
+                                <span class="price-value">₹{{ job.price }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="job-card-footer">
+                        <div class="job-card-actions">
+                            {% if job.status == 'assigned' %}
+                            <button class="btn-action btn-view" onclick="alert('Mark as completed feature coming soon!')">
+                                <i class="fas fa-check"></i> Mark Complete
+                            </button>
+                            <button class="btn-action btn-edit" onclick="alert('Contact client: {{ job.user.email }}')">
+                                <i class="fas fa-phone"></i> Contact Client
+                            </button>
+                            {% else %}
+                            <button class="btn-action btn-view" onclick="alert('View details coming soon!')">
+                                <i class="fas fa-eye"></i> View Details
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <h3>No jobs assigned yet</h3>
+                    <p>New jobs matching your skills will appear here!</p>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="sidebar">
+                <div class="user-profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div class="profile-info">
+                            <h3>{{ worker.user.first_name }} {{ worker.user.last_name }}</h3>
+                            <p>{{ worker.specialization }}</p>
+                            <span class="member-badge"><i class="fas fa-certificate"></i> Verified Professional</span>
+                        </div>
+                    </div>
+                    <div class="profile-stats">
+                        <div class="profile-stat">
+                            <i class="fas fa-star"></i>
+                            <span>Rating: {{ worker.rating }}/5.0</span>
+                        </div>
+                        <div class="profile-stat">
+                            <i class="fas fa-tools"></i>
+                            <span>Technical: {{ worker.technical_rating }}/5.0</span>
+                        </div>
+                        <div class="profile-stat">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ worker.location }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="skill-card">
+                    <div class="card-icon-header">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Your Skills</h3>
+                    <p>{{ worker.skills }}</p>
+                    <div class="features">
+                        <div><i class="fas fa-check-circle"></i> {{ worker.completed_jobs }} Jobs Completed</div>
+                        <div><i class="fas fa-trophy"></i> {{ worker.reliability_score }}% Reliability</div>
+                        <div><i class="fas fa-clock"></i> {{ worker.response_time }}min Response Time</div>
+                    </div>
+                </div>
+                
+                <div class="help-card">
+                    <i class="fas fa-headset"></i>
+                    <h4>Need Support?</h4>
+                    <p>Contact our worker support team</p>
+                    <a href="{% url 'help' %}" class="btn-help">Get Help</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

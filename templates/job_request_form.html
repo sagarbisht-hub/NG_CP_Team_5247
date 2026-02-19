@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="dashboard">
+    <nav class="dashboard-nav">
+        <div class="logo"><i class="fas fa-tools"></i> FixMate AI</div>
+        <div class="nav-right">
+            <span>{{ user.first_name|default:user.username }}</span>
+            <a href="{% url 'logout' %}" class="btn-logout">Logout</a>
+        </div>
+    </nav>
+    
+    <div class="dashboard-content">
+        <div class="job-request-header">
+            <div class="header-content">
+                <div class="welcome-badge">
+                    <i class="fas fa-hand-sparkles"></i>
+                    <span>Welcome</span>
+                </div>
+                <h1>Hi {{ user.first_name|default:user.username }}, let's find you the perfect professional!</h1>
+                <p>Fill out the form below and our AI will match you with the best worker for your needs</p>
+            </div>
+        </div>
+        
+        <div class="job-request-container">
+            <div class="job-form-main">
+                <form method="POST" enctype="multipart/form-data" class="modern-form">
+                    {% csrf_token %}
+                    
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle"></i>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <span class="section-number">1</span>
+                            What do you need?
+                        </h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label>Service Title</label>
+                                <input type="text" name="title" required placeholder="e.g., Fix leaking kitchen sink" class="input-large" autocomplete="off">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row two-cols">
+                            <div class="form-group">
+                                <label>Category</label>
+                                <select name="category" required class="select-large">
+                                    <option value="">Choose a category</option>
+                                    <option value="Plumbing">🔧 Plumbing</option>
+                                    <option value="Electrical">⚡ Electrical</option>
+                                    <option value="Carpentry">🔨 Carpentry</option>
+                                    <option value="Cleaning">🧹 Cleaning</option>
+                                    <option value="HVAC">❄️ HVAC</option>
+                                    <option value="Painting">🎨 Painting</option>
+                                    <option value="General">🛠️ General Repair</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Location</label>
+                                <input type="text" name="location" required placeholder="e.g., Downtown" value="Downtown" class="input-large" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <span class="section-number">2</span>
+                            Tell us more
+                        </h3>
+                        
+                        <div class="form-group full-width">
+                            <label>Detailed Description</label>
+                            <textarea name="description" rows="6" required placeholder="Please describe the issue in detail. What's wrong? When did it start? Any other relevant information..." class="textarea-large"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <span class="section-number">3</span>
+                            How urgent is it?
+                        </h3>
+                        
+                        <div class="urgency-grid">
+                            <label class="urgency-card">
+                                <input type="radio" name="urgency" value="low">
+                                <div class="urgency-content low">
+                                    <i class="fas fa-clock"></i>
+                                    <h4>Low Priority</h4>
+                                    <p>Can wait a few days</p>
+                                </div>
+                            </label>
+                            
+                            <label class="urgency-card">
+                                <input type="radio" name="urgency" value="medium" checked>
+                                <div class="urgency-content medium">
+                                    <i class="fas fa-bolt"></i>
+                                    <h4>Medium Priority</h4>
+                                    <p>Within 1-2 days</p>
+                                </div>
+                            </label>
+                            
+                            <label class="urgency-card">
+                                <input type="radio" name="urgency" value="high">
+                                <div class="urgency-content high">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <h4>High Priority</h4>
+                                    <p>Urgent/Emergency</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <span class="section-number">4</span>
+                            Add photos or videos (Optional)
+                        </h3>
+                        
+                        <div class="upload-zone" id="issueUploadArea">
+                            <div class="upload-icon">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <h4>Drag & drop files here</h4>
+                            <p>or click to browse</p>
+                            <span class="upload-formats">JPG, PNG, MP4, MOV • Max 50MB</span>
+                            <input type="file" name="attachments" id="issueFiles" multiple accept="image/*,video/*" style="display:none">
+                        </div>
+                        <div id="issueFilePreview" class="file-preview"></div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit-main">
+                            <span class="btn-icon">
+                                <i class="fas fa-magic"></i>
+                            </span>
+                            <span class="btn-text">
+                                <strong>Find My Perfect Professional</strong>
+                                <small>AI-powered matching in seconds</small>
+                            </span>
+                            <span class="btn-arrow">
+                                <i class="fas fa-arrow-right"></i>
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="job-form-sidebar">
+                <div class="info-card chatbot">
+                    <div class="card-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>AI Assistant</h3>
+                    <p class="chatbot-subtitle">Need help? Chat with our AI assistant</p>
+                    
+                    <div class="chatbot-container" id="chatbotContainer">
+                        <div class="chatbot-messages" id="chatbotMessages">
+                            <div class="chat-message bot">
+                                <div class="message-avatar">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="message-content">
+                                    <p>Hi! I'm your FixMate AI assistant. How can I help you today?</p>
+                                    <div class="quick-suggestions">
+                                        <button class="suggestion-btn" onclick="sendQuickMessage('What category should I choose?')">
+                                            <i class="fas fa-question-circle"></i> Category help
+                                        </button>
+                                        <button class="suggestion-btn" onclick="sendQuickMessage('How is pricing calculated?')">
+                                            <i class="fas fa-rupee-sign"></i> Pricing info
+                                        </button>
+                                        <button class="suggestion-btn" onclick="sendQuickMessage('What urgency level should I select?')">
+                                            <i class="fas fa-clock"></i> Urgency guide
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="chatbot-input">
+                            <input type="text" id="chatbotInput" placeholder="Ask me anything..." autocomplete="off">
+                            <button type="button" onclick="sendChatMessage()" class="btn-send-chat">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-card guarantee">
+                    <div class="card-icon">
+                        <i class="fas fa-shield-check"></i>
+                    </div>
+                    <h3>FixMate Guarantee</h3>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Verified professionals only</li>
+                        <li><i class="fas fa-check"></i> Fair AI-calculated pricing</li>
+                        <li><i class="fas fa-check"></i> 24/7 priority support</li>
+                        <li><i class="fas fa-check"></i> Satisfaction guaranteed</li>
+                    </ul>
+                </div>
+                
+                <div class="info-card steps">
+                    <div class="card-icon">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <h3>What Happens Next?</h3>
+                    <div class="step-list">
+                        <div class="step-item">
+                            <span class="step-num">1</span>
+                            <p>AI analyzes your request</p>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-num">2</span>
+                            <p>Best worker matched instantly</p>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-num">3</span>
+                            <p>Get price estimate</p>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-num">4</span>
+                            <p>Track progress real-time</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
