@@ -1,0 +1,28 @@
+ABOUT
+FixMate AI is an AI-powered local service
+marketplace designed to bridge the gap
+between high-quality service providers and
+urban consumers. Unlike traditional
+platforms that act as simple directories,
+FixMate AI utilizes intelligent automation to
+ensure fair pricing, high-quality
+workmanship, and a transparent ecosystem
+for both customers and workers.​
+
+FEATURE
+Problem Diagnosis via AI: Analyzes photos, videos, and
+voice notes to identify specific technical issues.​
+
+AI Price Negotiation: Real-time pricing based on job
+complexity, local demand, and urgency.​
+
+TrustShield: An NLP-based filter that detects and flags fake
+or forced reviews to protect platform integrity.​
+
+Weighted Opportunity Score (WOS): A multi-factor ranking
+system replacing the traditional "5-star" average.​
+
+STEP TO RUN
+ cd <project_directory> python-m venv venv venv\Scripts\activate pip install -r requirements.txt Set up the env file: -Create a file named env in the root directory. -Add the following configuration:-Copy code-SECRET_KEY=-DEBUG=True-EMAIL_HOST_USER= EMAIL_HOST_PASSWORD-SPECIAL KEY=<A unique 16-character key for the app> - GEMINI_API_KEY= python manage.py makemigrations python manage.py migrate python manage.py runserver
+
+​
