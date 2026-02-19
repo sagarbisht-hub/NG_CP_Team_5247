@@ -1,4 +1,5 @@
 ABOUT
+
 FixMate AI is an AI-powered local service
 marketplace designed to bridge the gap
 between high-quality service providers and
@@ -23,6 +24,13 @@ Weighted Opportunity Score (WOS): A multi-factor ranking
 system replacing the traditional "5-star" average.​
 
 STEP TO RUN
- cd <project_directory> python-m venv venv venv\Scripts\activate pip install -r requirements.txt Set up the env file: -Create a file named env in the root directory. -Add the following configuration:-Copy code-SECRET_KEY=-DEBUG=True-EMAIL_HOST_USER= EMAIL_HOST_PASSWORD-SPECIAL KEY=<A unique 16-character key for the app> - GEMINI_API_KEY= python manage.py makemigrations python manage.py migrate python manage.py runserver
+Git clone
+ cd <project_directory> 
+ python-m venv venv venv\Scripts\activate 
+ pip install -r requirements.txt
+ Set up the env file: -Create a file named env in the root directory. -Add the following configuration:-Copy code-SECRET_KEY=-DEBUG=True-EMAIL_HOST_USER= EMAIL_HOST_PASSWORD-SPECIAL KEY=<A unique 16-character key for the app> - GEMINI_API_KEY= 
+ python manage.py makemigrations
+ python manage.py migrate
+ python manage.py runserver
 
 ​
