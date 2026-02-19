@@ -11,6 +11,7 @@ workmanship, and a transparent ecosystem
 for both customers and workers.
 
 FEATURE
+
 1)Problem Diagnosis via AI: Analyzes photos, videos, and
 voice notes to identify specific technical issues.​
 
@@ -24,6 +25,7 @@ or forced reviews to protect platform integrity.​
 system replacing the traditional "5-star" average.
 
 STEPS TO RUN:
+
 git clone https://github.com/sagarbisht-hub/-NG_CP_Team_5247-.git
 cd <project_directory>
 python-m venv venv venv\Scripts\activate
