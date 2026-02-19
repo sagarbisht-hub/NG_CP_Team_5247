@@ -24,7 +24,7 @@ or forced reviews to protect platform integrity.​
 system replacing the traditional "5-star" average.
 
 STEPS TO RUN:
-git clone
+git clone https://github.com/sagarbisht-hub/-NG_CP_Team_5247-.git
 cd <project_directory>
 python-m venv venv venv\Scripts\activate
 pip install -r requirements.txt
